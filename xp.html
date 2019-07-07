@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+		<title>Vue | XP</title>
+
+		<link
+			rel="stylesheet"
+			href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+			integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+			crossorigin="anonymous"
+		/>
+	</head>
+
+	<body>
+		<div id="app" class="container p-5">
+			<h1 class="text-center">
+				You are <small>{{ level }}</small>
+			</h1>
+			<hr />
+			<h3 class="text-center">Current XP: {{ xp }}</h3>
+			<br />
+			<div class="row">
+				<div class="col-md-3 offset-md-3">
+					<button
+						class="btn btn-success btn-block"
+						@click="increaseXP"
+					>
+						<span class="font-weight-bold">+</span> Increase XP
+					</button>
+				</div>
+				<div class="col-md-3">
+					<button
+						class="btn btn-success btn-block"
+						@click="decreaseXP"
+					>
+						- Decrease XP
+					</button>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+	<script>
+		var app = new Vue({
+			el: "#app",
+			data: {
+				message: "Hello ",
+				xp: 30,
+			},
+			methods: {
+				increaseXP: function() {
+					return (this.xp += 10);
+				},
+				decreaseXP: function() {
+					return (this.xp -= 10);
+				},
+			},
+			computed: {
+				level: function() {
+					if (this.xp >= 200) {
+						return "Pro";
+					} else if (this.xp >= 100) {
+						return "Intermediate";
+					} else if (this.xp >= 0) {
+						return "Beginner";
+					} else {
+						return "Banned";
+					}
+				},
+			},
+		});
+	</script>
+</html>

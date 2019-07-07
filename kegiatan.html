@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+		<title>Vue | List</title>
+
+		<link
+			rel="stylesheet"
+			href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+			integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+			crossorigin="anonymous"
+		/>
+		<style type="text/css">
+			#app {
+				background: url("https://picsum.photos/1366/768/");
+				background-repeat: no-repeat;
+			}
+			.card-title::after {
+				content: "";
+				display: block;
+				width: 75px;
+				height: 5px;
+				background-color: #f86515;
+				border-radius: 10px;
+				margin-bottom: 30px;
+			}
+			input[type="text"]:focus {
+				box-shadow: 0 0 5px rgba(0, 0, 0, 0);
+				outline: none !important;
+			}
+			.list-group {
+				padding-top: 10px;
+				height: 150px;
+				overflow-y: scroll;
+			}
+
+			@media (min-width: 601px) {
+				.list-group {
+					padding-right: 10px;
+				}
+			}
+		</style>
+	</head>
+
+	<body>
+		<div id="app">
+			<div
+				class="d-flex justify-content-center align-items-center"
+				style="height: 100vh;">
+				<div class="card border-0 p-5 shadow-sm">
+					<div class="card-body">
+						<h3 class="card-title">List</h3>
+						<div class="form-inline">
+							<div class="form-group">
+								<input
+									type="text"
+									class="form-control border-0"
+									placeholder="Kegiatan"
+									v-model="kegiatanBaru"
+									@keyup.enter="tambahKegiatan"/>
+							</div>
+							<div class="form-group">
+								<button
+									class="btn btn-primary rounded-0"
+									@click="tambahKegiatan">
+									<span class="font-weight-bold">+</span>
+								</button>
+							</div>
+						</div>
+						<hr />
+						<list-kegiatan :kegiatans="kegiatans" />
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+	<script>
+		Vue.component("list-kegiatan", {
+			props: ["kegiatans"],
+			methods: {
+				hapusKegiatan: function(x) {
+					this.$parent.hapusKegiatan(x);
+				},
+			},
+			template: `
+				<div v-if="kegiatans.length == 0" class="text-center text-info font-weight-bold">Jadwal Kosong</div>
+				<div v-else class= "list-group">
+					<a
+						href="#"
+						class="list-group-item list-group-item-action"
+						v-for="(kegiatan, n) in kegiatans">
+						<small>{{ kegiatan }}</small>
+						<span 
+							class="float-right text-danger font-weight-bold" 
+							@click="hapusKegiatan(n)">
+							-
+						</span>
+					</a>
+				</div>
+			`,
+		});
+
+		var app = new Vue({
+			el: "#app",
+			component: ["list-kegiatan"],
+			data: {
+				kegiatans: [],
+				kegiatanBaru: "",
+			},
+			mounted: function() {
+				if (localStorage.getItem("kegiatans")) {
+					try {
+						this.kegiatans = JSON.parse(
+							localStorage.getItem("kegiatans")
+						);
+					} catch (e) {
+						localStorage.removeItem("kegiatans");
+					}
+				}
+			},
+			methods: {
+				tambahKegiatan: function() {
+					if (!this.kegiatans) {
+						return;
+					}
+					this.kegiatans.push(this.kegiatanBaru);
+					this.kegiatanBaru = "";
+					this.simpanKegiatan();
+				},
+				hapusKegiatan: function(x) {
+					this.kegiatans.splice(x, 1);
+					this.simpanKegiatan();
+				},
+				simpanKegiatan: function() {
+					const parsed = JSON.stringify(this.kegiatans);
+					localStorage.setItem("kegiatans", parsed);
+				},
+			},
+		});
+	</script>
+</html>

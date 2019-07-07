@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+		<title>Vue | Kode Pos</title>
+
+		<link
+			rel="stylesheet"
+			href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+			integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+			crossorigin="anonymous"
+		/>
+		<style type="text/css">
+			#app {
+				background: url("https://picsum.photos/1366/768/");
+				background-repeat: no-repeat;
+			}
+			.card-title::after {
+				content: "";
+				display: block;
+				width: 75px;
+				height: 5px;
+				background-color: #f86515;
+				border-radius: 10px;
+				margin-bottom: 30px;
+			}
+			.kota {
+				margin-top: 10px;
+				margin-left: 5px;
+				text-transform: uppercase;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div id="app">
+			<div
+				class="d-flex justify-content-center align-items-center"
+				style="height: 100vh;"
+			>
+				<div class="card border-0">
+					<div class="card-body">
+						<h3 class="card-title">Isi Form</h3>
+						<div class="row">
+							<div class="col-md-6">
+								<div class="form-group">
+									<input
+										type="text"
+										class="form-control"
+										placeholder="Kota Asal"
+										v-model="kodeAsal"
+									/>
+									<small class="font-weight-bold">
+										{{ kotaAsal }}
+									</small>
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+									<input
+										type="text"
+										class="form-control"
+										placeholder="Kota Tujuan"
+										v-model="kodeTujuan"
+									/>
+									<small class="font-weight-bold">
+										{{ kotaTujuan }}
+									</small>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-12">
+								<button
+									class="btn btn-primary btn-block"
+									id="submitform"
+								>
+									Submit
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/js/all.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.11/lodash.min.js"></script>
+	<script>
+		var app = new Vue({
+			el: "#app",
+			data: {
+				kodeAsal: "",
+				kotaAsal: "",
+				kodeTujuan: "",
+				kotaTujuan: "",
+			},
+			watch: {
+				kodeAsal: function() {
+					this.kotaAsal = "";
+					if (this.kodeAsal.length == 5) {
+						this.lihatKodeAsal();
+					}
+				},
+				kodeTujuan: function() {
+					this.kotaTujuan = "";
+					if (this.kodeTujuan.length == 5) {
+						this.lihatKodeTujuan();
+					}
+				},
+			},
+			methods: {
+				lihatKodeAsal: _.debounce(function() {
+					var app = this;
+					app.kotaAsal = "Mencari...";
+					axios
+						.get("http://ziptasticapi.com/" + app.kodeAsal)
+						.then(function(response) {
+							app.kotaAsal =
+								response.data.city + ", " + response.data.state;
+						})
+						.catch(function(error) {
+							app.kotaAsal = "Kode POS salah";
+						});
+				}, 500),
+				lihatKodeTujuan: _.debounce(function() {
+					var app = this;
+					app.kotaTujuan = "Mencari...";
+					axios
+						.get("http://ziptasticapi.com/" + app.kodeTujuan)
+						.then(function(response) {
+							app.kotaTujuan =
+								response.data.city + ", " + response.data.state;
+						})
+						.catch(function(error) {
+							app.kotaTujuan = "Kode POS salah";
+						});
+				}, 500),
+			},
+		});
+	</script>
+</html>
